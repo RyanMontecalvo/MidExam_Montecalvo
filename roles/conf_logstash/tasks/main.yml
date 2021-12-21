@@ -1,0 +1,29 @@
+---
+# tasks file for logstash_conf
+
+- name: Install Logstash for Ubuntu
+  apt:
+    name: logstash
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Logstash for CentOS
+  yum:
+    name: logstash
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Run logstash daemon-reload for both  Ubuntu and CentOS
+  systemd: daemon_reload=yes
+  when: ansible_distribution in ["Ubuntu","CentOS"]
+
+- name: Enable service logstash for both Ubuntu and CentOS
+  systemd:
+    name: logstash
+    enabled: yes
+  when: ansible_distribution in ["Ubuntu","CentOS"]
+
+- name: Logstash verifification for both Ubuntu and CentOS
+  systemd: state=started name=logstash
+  when: ansible_distribution in ["Ubuntu","CentOS"]
